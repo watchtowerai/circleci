@@ -1,2 +1,2 @@
-# circleci
-A container with useful helpers for CircleCI 2.0
+# circle
+CircleCI Docker-in-Docker image

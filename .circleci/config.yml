@@ -1,0 +1,26 @@
+defaults: &defaults
+  working_directory: /dashboard
+  docker:
+    - image: docker:17.06-ce-git
+
+version: 2
+
+jobs:
+  01_run_ci:
+    steps:
+      - setup_remote_docker:
+          reusable: true
+
+      - checkout
+
+      - run:
+          name: Build Docker image
+          command: |
+            set -ex
+            docker build -t circleci:$(cat VERSION) .
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - 01_run_ci
