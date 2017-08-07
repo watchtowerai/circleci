@@ -1,5 +1,5 @@
 defaults: &defaults
-  working_directory: /dashboard
+  working_directory: /circleci
   docker:
     - image: docker:17.06-ce-git
 
@@ -7,6 +7,8 @@ version: 2
 
 jobs:
   01_run_ci:
+    <<: *defaults
+
     steps:
       - setup_remote_docker:
           reusable: true
