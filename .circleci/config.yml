@@ -1,12 +1,12 @@
 defaults: &defaults
   working_directory: /circleci
   docker:
-    - image: docker:17.06-ce-git
+    - image: docker:17.06.0-ce-git
 
 version: 2
 
 jobs:
-  01_run_ci:
+  01_build_image:
     <<: *defaults
 
     steps:
@@ -21,8 +21,55 @@ jobs:
             set -ex
             docker build -t circleci:$(cat VERSION) .
 
+  02_test_image:
+    <<: *defaults
+
+    steps:
+      - setup_remote_docker:
+          reusable: true
+
+      - checkout
+
+      - run:
+          name: Check if dependecies are installed
+          command: |
+            set -ex
+            export image=circleci:$(cat VERSION)
+            docker run $image bash -c 'which docker'
+            docker run $image bash -c 'which docker-compose'
+            docker run $image bash -c 'which ci'
+            docker run $image bash -c 'which python'
+            docker run $image bash -c 'which wfi'
+
+  03_push_image:
+    <<: *defaults
+
+    steps:
+      - setup_remote_docker:
+          reusable: true
+
+      - checkout
+
+      - run:
+          name: Log in to Docker repository
+          command: docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+
+      - run:
+          name: Push the image
+          command: doceker push circleci:$(cat VERSION)
+
 workflows:
   version: 2
   test:
     jobs:
-      - 01_run_ci
+      - 01_build_image
+      - 02_test_image:
+          requires:
+            - 01_build_image
+      - 03_push_image:
+          requires:
+            - 02_test_image
+          filters:
+            branches:
+              only:
+                - master
