@@ -91,12 +91,12 @@ jobs:
           <<: *import_image
 
       - run:
-        name: Tag the git commit
-        command: |
-          # This fails if the tag already exists
-          # preventing a push to the docker hub.
-          git tag "$(cat VERSION)"
-          git push --tags
+          name: Tag the git commit
+          command: |
+            # This fails if the tag already exists
+            # preventing a push to the docker hub.
+            git tag "$(cat VERSION)"
+            git push --tags
 
       - run:
           name: Log in to Docker repository
