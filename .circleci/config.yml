@@ -115,7 +115,3 @@ workflows:
       - 03_push_image:
           requires:
             - 02_test_image
-          filters:
-            branches:
-              only:
-                - master
