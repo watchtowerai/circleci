@@ -88,18 +88,6 @@ In order to use `push_lambda`, just add it as a step to your CircleCI config fil
     command: push_lambda $function_name
 ```
 
-## Custom helper: `push_to_heroku`
-
-`push_to_heroku` wraps around some of the logic necessary to run a `git push` deployment to Heroku from the CircleCI pipeline. This is meant to replace a GitHub-Heroku integration to provide better visibility into the deployment process. In order to use it, you will need to set two environment variables in the CircleCI project dashboard: `$HEROKU_LOGIN` and `$HEROKU_API_KEY`. The first one is the login (email) of the user on behalf of whom we're running the push. The latter is the long-lived API key for that user. Note: when generating these credentials please use service accounts.
-
-In order to use `push_to_heroku` in your CircleCI pipeline, add a step like this - ideally you'd want to scope it to a staging or production branch of your repo:
-
-```yaml
-- run:
-    name: Push to staging
-    command: push_to_heroku $staging_app_name
-```
-
 ## Custom helper: `push_image_to_ecr`
 
 `push_image_to_ecr` wraps around the logic required to use your AWS environment
@@ -115,6 +103,21 @@ In order to use `push_to_heroku` in your CircleCI pipeline, add a step like this
         --image-name IMAGE_NAME \
         --ecr-repo ECR_REPO \
         --aws-region AWS_REGION
+```
+
+## Custom helper: `pull_image_from_ecr`
+
+`pull_image_from_ecr` wraps around the logic required to pull a Docker image from AWS ECR.
+This command takes the same inputs as the `push_image_to_ecr` helper, except that it operates in the reverse direction.
+
+```yaml
+- run:
+    name: Pull image from ECR
+    command: |
+      pull_image_from_ecr \
+        --image-name IMAGE_NAME \
+        --ecr-repo ECR_REPO \
+        --awss-region AWS_REGION
 ```
 
 ## Custom helper: `clean_up_reusable_docker`
