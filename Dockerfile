@@ -21,6 +21,7 @@ RUN apt update \
       git \
       jq \
       openssh-client \
+      pipenv \
       python \
       python-pip \
       zip \
