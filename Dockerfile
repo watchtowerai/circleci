@@ -14,6 +14,7 @@ COPY --from=extractor /docker/docker /usr/bin/docker
 # AWS and docker-compose are python programs
 ENV AWSCLI_VERSION=1.15.35
 ENV COMPOSE_VERSION=1.21.2
+ENV PIPENV_VERSION=2018.5.18
 
 RUN apt update \
     && apt install -y \
@@ -21,12 +22,14 @@ RUN apt update \
       git \
       jq \
       openssh-client \
-      pipenv \
       python \
       python-pip \
       zip \
     && python2 -m pip install --upgrade pip \
-    && pip install awscli==${AWSCLI_VERSION} docker-compose==${COMPOSE_VERSION}
+    && pip install \
+        awscli==${AWSCLI_VERSION} \
+        docker-compose==${COMPOSE_VERSION} \
+        pipenv==${PIPENV_VERSION}
 
 ADD scripts/ci.sh /usr/bin/ci
 ADD scripts/clean_up_reusable_docker.sh /usr/bin/clean_up_reusable_docker
