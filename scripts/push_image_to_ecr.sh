@@ -12,6 +12,8 @@ if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
   exit 1
 fi
 
+TAGS=("${CIRCLE_SHA1}")
+
 while [ "$1" != "" ]; do
   case $1 in
     "--image-name")
@@ -25,6 +27,10 @@ while [ "$1" != "" ]; do
     "--aws-region")
       shift
       AWS_REGION=$1
+      ;;
+    "--tag")
+      shift
+      TAGS+=("$1")
       ;;
   esac
   shift
@@ -50,7 +56,10 @@ $(aws ecr get-login --no-include-email --region $AWS_REGION)
 set -ex
 
 target=${ECR_REPO}:${CIRCLE_SHA1}
-docker tag ${IMAGE_NAME}:${CIRCLE_SHA1} $target
+
+for TAG in "${TAGS[@]}"; do
+  docker tag ${IMAGE_NAME}:${TAG} $target
+done
 
 retry_count=0
 while (( retry_count++ < ${MAX_RETRY_COUNT_FOR_PUSHING_DOCKER_IMAGE:-3} )); do
