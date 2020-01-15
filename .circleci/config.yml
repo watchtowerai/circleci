@@ -1,3 +1,5 @@
+---
+
 defaults: &defaults
   working_directory: /circleci
   docker:
@@ -55,20 +57,7 @@ jobs:
           name: Check if dependecies are installed
           command: |
             set -ex
-            export image=$(./image)
-            docker run $image bash -c 'which aws'
-            docker run $image bash -c 'which ci'
-            docker run $image bash -c 'which clean_up_reusable_docker'
-            docker run $image bash -c 'which docker'
-            docker run $image bash -c 'which docker-compose'
-            docker run $image bash -c 'which ensure_head'
-            docker run $image bash -c 'which print_env'
-            docker run $image bash -c 'which push_image_to_ecr'
-            docker run $image bash -c 'which push_image_to_docker_hub'
-            docker run $image bash -c 'which pull_image_from_ecr'
-            docker run $image bash -c 'which push_lambda'
-            docker run $image bash -c 'which python'
-            docker run $image bash -c 'which wfi'
+            docker run "$(./image)" '/tests/tests.sh'
 
   03_push_image:
     <<: *defaults
@@ -76,8 +65,9 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-          # Stored in 1password "Team:Release Eng" vault `id_rsa_circleci_circleci`
-          - "5e:7e:b1:3a:b0:65:dc:7c:07:52:fd:dd:a2:87:02:fc"
+            # Stored in 1password "Team:Release Eng"
+            # vault `id_rsa_circleci_circleci`
+            - "5e:7e:b1:3a:b0:65:dc:7c:07:52:fd:dd:a2:87:02:fc"
 
       - setup_remote_docker:
           reusable: true
