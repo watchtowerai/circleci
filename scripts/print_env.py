@@ -28,7 +28,7 @@ def print_env(target):
     for name, value in os.environ.items():
         if not name.startswith(prefix):
             continue
-        new_name = name.lstrip(prefix)
+        new_name = name[len(prefix):]
         print("export %s=%s" % (new_name, value))
 
 
