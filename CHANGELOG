@@ -1,3 +1,8 @@
+0.4.1
+---
+
+- fixing print_env to not strip all leading characters contained in prefix
+
 0.4.0
 ---
 
