@@ -113,13 +113,9 @@ tags=("$CIRCLE_SHA1" "$@")
 
 printf '%s\n' "${tags[@]}" | grep -q '^--' && error_usage "It looks like you're passing flags instead of tags"
 
-info "Fetching ECR login command"
-if ! command=$(aws ecr get-login --no-include-email --region "$region"); then
-    error "Problem executing 'aws ecr get-login command"
-fi
-
 info "Logging in to repo"
-$command || error "Problem logging in to repo"
+aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repo_url" \
+    || error "Problem logging in to repo"
 
 for tag in "${tags[@]}"; do
     tag_and_push "$local_image:$CIRCLE_SHA1" "$repo_url:$tag"
