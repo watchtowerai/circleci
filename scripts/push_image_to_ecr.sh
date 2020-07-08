@@ -28,6 +28,10 @@
 # The set of tags to push to always includes $CIRCLE_SHA1. Any custom tags passed on the
 # command line are appended to the set.
 
+# Makes commands fail if they are at the beginning of a shell pipeline
+# See `man set`
+set -o pipefail
+
 my_dirname=$(dirname "$0")
 my_basename=$(basename "$0")
 
@@ -114,8 +118,13 @@ tags=("$CIRCLE_SHA1" "$@")
 printf '%s\n' "${tags[@]}" | grep -q '^--' && error_usage "It looks like you're passing flags instead of tags"
 
 info "Logging in to repo"
-aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repo_url" \
-    || error "Problem logging in to repo"
+if ! aws ecr get-login-password --region "$region" | docker login --username AWS --password-stdin "$repo_url"; then
+  if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    error "Problem getting repo password"
+  else
+    error "Problem logging in to repo"
+  fi
+fi
 
 for tag in "${tags[@]}"; do
     tag_and_push "$local_image:$CIRCLE_SHA1" "$repo_url:$tag"
