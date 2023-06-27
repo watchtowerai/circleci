@@ -12,6 +12,7 @@ jobs:
     <<: *defaults
 
     steps:
+      - add_ssh_keys
       - setup_remote_docker:
           reusable: true
 
@@ -39,6 +40,7 @@ jobs:
     <<: *defaults
 
     steps:
+      - add_ssh_keys
       - setup_remote_docker:
           reusable: true
 
@@ -63,6 +65,7 @@ jobs:
     <<: *defaults
 
     steps:
+      - add_ssh_keys
       - add_ssh_keys:
           fingerprints:
             # Stored in 1password "Team:Release Eng"
