@@ -1,4 +1,4 @@
-FROM debian as extractor
+FROM debian:bookworm as extractor
 
 # Instead of installing the full docker-ce distribution, which also pulls in
 # the DKMS module and other stuff for running the server.
@@ -8,7 +8,7 @@ RUN apt update && apt install -y curl \
     && curl https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz | \
     tar xzvf - -C /
 
-FROM debian
+FROM debian:bookworm
 COPY --from=extractor /docker/docker /usr/bin/docker
 
 # AWS and docker-compose are python programs
