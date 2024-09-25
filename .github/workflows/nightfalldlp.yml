@@ -1,0 +1,17 @@
+name: nightfalldlp
+on: [pull_request]
+jobs:
+  nightfalldlp:
+    name: build and run nightfalldlp
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout Repo Action
+        uses: actions/checkout@v4
+
+      - name: Run nightfallDLP action
+        uses: nightfallai/nightfall_dlp_action@v2.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NIGHTFALL_API_KEY: ${{ secrets.NIGHTFALL_API_KEY2 }}
+          EVENT_BEFORE: ${{ github.event.before }}
